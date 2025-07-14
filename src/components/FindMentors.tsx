@@ -5,10 +5,9 @@ import type { AppView } from "../types"
 
 interface FindMentorsProps {
   user: any
-  onNavigate: (view: AppView) => void
 }
 
-const FindMentors = ({ user, onNavigate }: FindMentorsProps) => {
+const FindMentors = ({ user }: FindMentorsProps) => {
   const mentors = [
     {
       id: 1,
@@ -41,7 +40,7 @@ const FindMentors = ({ user, onNavigate }: FindMentorsProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header user={user} onNavigate={onNavigate} currentPage="find-mentors" />
+      <Header user={user} currentPage="find-mentors" />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">

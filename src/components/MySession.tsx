@@ -5,10 +5,9 @@ import type { AppView } from "../types"
 
 interface MySessionsProps {
   user: any
-  onNavigate: (view: AppView) => void
 }
 
-const MySessions = ({ user, onNavigate }: MySessionsProps) => {
+const MySessions = ({ user }: MySessionsProps) => {
   const upcomingSessions = [
     {
       id: 1,
@@ -88,7 +87,7 @@ const MySessions = ({ user, onNavigate }: MySessionsProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header user={user} onNavigate={onNavigate} currentPage="my-sessions" />
+      <Header user={user} currentPage="my-sessions" />
 
       <div className="max-w-4xl mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">My Sessions</h1>

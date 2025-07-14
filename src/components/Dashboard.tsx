@@ -5,10 +5,9 @@ import type { AppView } from "../types"
 
 interface DashboardProps {
   user: any
-  onNavigate: (view: AppView) => void
 }
 
-const Dashboard = ({ user, onNavigate }: DashboardProps) => {
+const Dashboard = ({ user }: DashboardProps) => {
   const upcomingSessions = [
     {
       id: 1,
@@ -42,7 +41,7 @@ const Dashboard = ({ user, onNavigate }: DashboardProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header user={user} onNavigate={onNavigate} currentPage="dashboard" />
+      <Header user={user} currentPage="dashboard" />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="mb-8">

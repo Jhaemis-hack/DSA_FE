@@ -1,15 +1,14 @@
 "use client"
 
 import { useState } from "react"
-import SignupFlow from "./components/SignupFlow"
-import Dashboard from "./components/Dashboard"
-import FindMentors from "./components/FindMentors"
-import MySessions from "./components/MySession"
 import type { AppView } from "./types/index"
-import "./App.css"
+import './index.css';
+// import './App.css';
+import Router from "./router"
+
 
 function App() {
-  const [currentView, setCurrentView] = useState<AppView>("signup")
+  const [currentView, setCurrentView] = useState<AppView>("dashboard")
   const [user, setUser] = useState<any>(null)
 
   const handleSignupComplete = (userData: any) => {
@@ -23,17 +22,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {currentView === "signup" && (
-        <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4">
-          <SignupFlow onComplete={handleSignupComplete} />
-        </div>
-      )}
-
-      {currentView === "dashboard" && <Dashboard user={user} onNavigate={handleNavigation} />}
-
-      {currentView === "find-mentors" && <FindMentors user={user} onNavigate={handleNavigation} />}
-
-      {currentView === "my-sessions" && <MySessions user={user} onNavigate={handleNavigation} />}
+      <Router onComplete={handleSignupComplete}/>
     </div>
   )
 }

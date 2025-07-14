@@ -19,4 +19,4 @@ export interface MentorSignupData {
 export type SignupStep = "role-selection" | "mentee-form" | "mentor-form"
 
 // Add the AppView type here so it can be imported by other components
-export type AppView = "signup" | "dashboard" | "find-mentors" | "my-sessions"
+export type AppView = "dashboard" | "find-mentors" | "my-sessions"
