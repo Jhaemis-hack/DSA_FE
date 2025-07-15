@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { UserRole } from "../types";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-import { loginSchema } from "../utils/formValidation";
+import { loginSchema } from "../schema/formValidation";
 import { Eye, EyeOff } from "lucide-react";
 
 interface RoleSelectionProps {

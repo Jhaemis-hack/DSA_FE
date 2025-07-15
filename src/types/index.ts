@@ -1,22 +1,61 @@
-export type UserRole = "mentee" | "mentor" | null
+export type UserRole = "mentee" | "mentor" | null;
 
 export interface MenteeSignupData {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  lookingFor: string
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  lookingFor: string;
 }
 
 export interface MentorSignupData {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  teachingArea: string
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  teachingArea: string;
 }
 
-export type SignupStep = "role-selection" | "mentee-form" | "mentor-form"
+export type SignupStep = "role-selection" | "mentee-form" | "mentor-form";
 
 // Add the AppView type here so it can be imported by other components
-export type AppView = "dashboard" | "find-mentors" | "my-sessions"
+export type AppView = "dashboard" | "find-mentors" | "my-sessions";
+
+export interface AuthRequestInterface {
+  base: string;
+  login: string;
+  profile: string;
+  register: string;
+  logOut: string;
+  activeUser: string;
+}
+
+export interface menteeRequestInterface {
+  base: string;
+  myProfile: string;
+  randomProfile: (id: string) => string;
+  updateProfile: string;
+  fetchMentors: string;
+  sendRequest: (mentorId: string) => string;
+  fetchMentorAvailability: (mentorId: string) => string;
+  bookSession: (mentorId: string) => string;
+  viewSessions: string;
+  sendSessionFeedback: (sessionId: string) => string;
+  viewSentRequests: string;
+}
+
+export interface mentorRequestInterface {
+  base: string;
+  viewRequest: string;
+  updateRequestStatus: (reqId: string) => string;
+  fetchActiveSessions: string;
+  editAvailability: string;
+}
+
+export interface adminRequestInterface {
+     base: string
+    fetchAllUsers: string
+    updateRole: (id:string) => string
+    createNewUser:string
+    editProfile: (id:string)=> string
+}

@@ -1,13 +1,14 @@
 "use client"
 
 import Header from "./Header"
-import type { AppView } from "../types"
+import { Success } from "../utils/toastify"
 
 interface DashboardProps {
   user: any
 }
 
 const Dashboard = ({ user }: DashboardProps) => {
+  // Success("welcome back!")
   const upcomingSessions = [
     {
       id: 1,

@@ -2,6 +2,7 @@ import Header from "./Header"
 import { Button } from "./ui/Button"
 import { Card } from "./ui/Card"
 import type { AppView } from "../types"
+import MentorMenteeCard from "./MentorMenteeCard"
 
 interface FindMentorsProps {
   user: any
@@ -63,31 +64,7 @@ const FindMentors = ({ user }: FindMentorsProps) => {
         <div className="grid md:grid-cols-3 gap-6">
           {mentors.map((mentor) => (
             <Card key={mentor.id} className="p-6">
-              <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-white font-semibold text-lg">{mentor.avatar}</span>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-1">{mentor.name}</h3>
-                <div className="flex items-center justify-center space-x-4 text-sm text-gray-600 mb-3">
-                  <span>⭐ {mentor.rating}</span>
-                  <span>📅 {mentor.sessions} sessions</span>
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {mentor.skills.map((skill, index) => (
-                    <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900 mb-3">${mentor.price}/session</div>
-                <Button className="w-full">Book Session</Button>
-              </div>
+              <MentorMenteeCard Role={mentor} />
             </Card>
           ))}
         </div>

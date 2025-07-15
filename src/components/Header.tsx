@@ -31,7 +31,7 @@ const Header = ({ user, currentPage }: HeaderProps) => {
               Dashboard
             </button>
           </Link>
-          <Link to="/find-mentors">
+          <Link to={user?.role === "mentor"? "/view-mentees": "/find-mentors"}>
             <button
               className={`hover:text-gray-900 transition-colors cursor-pointer ${
                 currentPage === "find-mentors"
@@ -39,7 +39,7 @@ const Header = ({ user, currentPage }: HeaderProps) => {
                   : "text-gray-600"
               }`}
             >
-              Find Mentors
+              {user?.role === "mentor"? "view mentees" : "Find Mentors"}
             </button>
           </Link>
           <Link to="/sessions">
