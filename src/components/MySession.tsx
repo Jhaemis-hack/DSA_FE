@@ -1,15 +1,22 @@
 "use client";
 
 import Header from "./Header";
-import type { AppView } from "../types";
+import type { AppView, SessionType } from "../types";
 import PassSessions from "./PassSessionCard";
 import UpcomingSession from "./UpcomingSessionCard";
+import { useEffect, useState } from "react";
+import { viewAvailableSessions } from "../services/menteeService";
 
 interface MySessionsProps {
   user: any;
 }
 
+
+
+
 const MySessions = ({ user }: MySessionsProps) => {
+  const [sessions, setSessions] = useState<SessionType[]>();
+
   const upcomingSessions = [
     {
       id: 1,
@@ -64,14 +71,22 @@ const MySessions = ({ user }: MySessionsProps) => {
     },
   ];
 
+    useEffect(() => {
+      const controller = new AbortController();
+  
+      async function fetchMentors() {
+        const data: SessionType[] = await viewAvailableSessions();
+        setSessions(data);
+      }
+      fetchMentors();
+  
+      return () => controller.abort();
+    }, []);
+  
+
   const handleJoinSession = (sessionId: number) => {
     console.log("Joining session:", sessionId);
     // Implement join session logic
-  };
-
-  const handleReschedule = (sessionId: number) => {
-    console.log("Rescheduling session:", sessionId);
-    // Implement reschedule logic
   };
 
   const handleRateAgain = (sessionId: number) => {
@@ -103,9 +118,12 @@ const MySessions = ({ user }: MySessionsProps) => {
             Upcoming Sessions
           </h2>
           <div className="space-y-4">
-            {upcomingSessions.map((session) => (
-              <UpcomingSession session={session} />
-            ))}
+            {Array.isArray(sessions) && sessions.map(session => {
+              if(session.sessionStatus==="scheduled"){ 
+                return <UpcomingSession key={session.id} session={session} />
+              }
+            }
+            )}
           </div>
         </div>
 
@@ -115,9 +133,11 @@ const MySessions = ({ user }: MySessionsProps) => {
             Past Sessions
           </h2>
           <div className="space-y-4">
-            {pastSessions.map((session) => (
-              <PassSessions session={session} />
-            ))}
+            {Array.isArray(sessions) && sessions.map(session => {
+              if(session.sessionStatus==="completed"){
+              return <PassSessions key={session.id} session={session} />
+              }}
+            )}
           </div>
         </div>
       </div>

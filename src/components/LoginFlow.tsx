@@ -1,16 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import type { UserRole } from "../types";
+import type { ResponseInterface, UserRole } from "../types";
 import { Link, useNavigate } from "react-router-dom";
-import { useFormik } from "formik";
+import { useFormik, type FormikHelpers } from "formik";
 import { loginSchema } from "../schema/formValidation";
 import { Eye, EyeOff } from "lucide-react";
+import Axios from "../config";
+import { authRequest } from "../utils/request";
+import { Error, Success } from "../utils/toastify";
+import { Login } from "../services/authService";
 
 interface RoleSelectionProps {
   // selectedRole: UserRole;
   onRoleSelect: (role: UserRole) => void;
-  onContinue: () => void;
+  userRole: (role: string) => void;
 }
 
 type Role = "mentee" | "mentor" | "";
@@ -18,32 +22,35 @@ type Role = "mentee" | "mentor" | "";
 const LoginFlow = ({
   // selectedRole="mentee",
   onRoleSelect,
-  onContinue,
+  userRole,
 }: RoleSelectionProps) => {
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
   const selectedRole: Role = "mentee";
-
-  const handleLoginEvent = function () {
-    if (!email || !password) return;
-    Navigate("/home", { replace: true });
-  };
 
   interface FormValues {
     email: string;
     password: string;
-    confirmpass: string;
   }
   const initialValues = {
     email: "",
     password: "",
   };
 
-  const onSubmit = function () {};
+  const onSubmit = async (
+    payload: FormValues,
+    actions: FormikHelpers<FormValues>
+  ) => {
+    const response = await Login(payload);
+
+    if (response?.status_code === 200) {
+      userRole(response.data.role);
+      await actions.resetForm();
+    }
+    navigate("/dashboard", { replace: true });
+  };
 
   const {
     values,
@@ -61,7 +68,10 @@ const LoginFlow = ({
 
   return (
     <>
-      <div className="md:flex md:justify-center md:items-center md:flex-col" style={{ padding: "15% 10%" }}>
+      <div
+        className="md:flex md:justify-center md:items-center md:flex-col"
+        style={{ padding: "15% 10%" }}
+      >
         <h2
           className=""
           style={{
@@ -152,13 +162,17 @@ const LoginFlow = ({
           </div>
           <button
             type="submit"
-            onClick={onContinue}
             disabled={isSubmitting}
             className="disabled:opacity-75 disabled:cursor-not-allowed w-full bg-[#222222] hover:bg-gray-800  text-white py-4 rounded-xl font-medium transition-colors mb-4"
           >
             Login
           </button>
-          <p className="text-center">Don't have account yet? <Link to="/signup" className="text-blue-600 active:text-[#222222]" >Register</Link></p>
+          <p className="text-center">
+            Don't have account yet?{" "}
+            <Link to="/signup" className="text-blue-600 active:text-[#222222]">
+              Register
+            </Link>
+          </p>
         </form>
       </div>
     </>

@@ -6,16 +6,17 @@ import type {
   mentorRequestInterface,
 } from "../types";
 
-const authRequest: AuthRequestInterface = {
+export const authRequest: AuthRequestInterface = {
   base: "auth/",
   login: `auth/login`,
   profile: "auth/profile",
   register: "auth/register",
   logOut: "auth/logout",
   activeUser: "auth/me",
+  obtainDetails: "auth/fulldetails",
 };
 
-const menteeRequest: menteeRequestInterface = {
+export const menteeRequest: menteeRequestInterface = {
   base: "users/",
   myProfile: "users/me",
   randomProfile(id: string) {
@@ -39,8 +40,9 @@ const menteeRequest: menteeRequestInterface = {
   viewSentRequests: "users/requests/sent",
 };
 
-const mentorRequest: mentorRequestInterface = {
+export const mentorRequest: mentorRequestInterface = {
   base: "mentors",
+  myProfile: "users/me",
   viewRequest: "mentors/requests/received",
   updateRequestStatus(reqId: string) {
     return `mentors/requests/${reqId}`;
@@ -49,7 +51,7 @@ const mentorRequest: mentorRequestInterface = {
   editAvailability: "mentors/available/edit",
 };
 
-const adminRequest: adminRequestInterface = {
+export const adminRequest: adminRequestInterface = {
   base: "admin/",
   fetchAllUsers: "admin/users",
   updateRole(id: string) {

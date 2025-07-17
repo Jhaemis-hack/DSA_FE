@@ -1,11 +1,11 @@
 export type UserRole = "mentee" | "mentor" | null;
 
-export interface MenteeSignupData {
+export interface MenteeProfileUpdate {
   firstName: string;
   lastName: string;
-  email: string;
-  password: string;
-  lookingFor: string;
+  bio: string;
+  skill: string;
+  goals: string;
 }
 
 export interface MentorSignupData {
@@ -28,6 +28,7 @@ export interface AuthRequestInterface {
   register: string;
   logOut: string;
   activeUser: string;
+  obtainDetails: string;
 }
 
 export interface menteeRequestInterface {
@@ -46,6 +47,7 @@ export interface menteeRequestInterface {
 
 export interface mentorRequestInterface {
   base: string;
+  myProfile: string,
   viewRequest: string;
   updateRequestStatus: (reqId: string) => string;
   fetchActiveSessions: string;
@@ -53,9 +55,43 @@ export interface mentorRequestInterface {
 }
 
 export interface adminRequestInterface {
-     base: string
-    fetchAllUsers: string
-    updateRole: (id:string) => string
-    createNewUser:string
-    editProfile: (id:string)=> string
+  base: string;
+  fetchAllUsers: string;
+  updateRole: (id: string) => string;
+  createNewUser: string;
+  editProfile: (id: string) => string;
+}
+
+export interface ResponseInterface {
+  status_code: number;
+  message: string;
+  data: any | null;
+}
+
+export interface mentorObject {
+  id: string;
+  name: string;
+  skill: string[];
+  industry: string[];
+}
+
+export interface requestStatusType {
+  id: string;
+  name: string;
+  skill: string[];
+  industry: string[];
+  status: string;
+  date: string;
+}
+
+export interface SessionType {
+  id: string;
+  name: string;
+  skill: string;
+  industry: string;
+  sessionStatus: string;
+  rating: number;
+  date: string;
+  start: string;
+  end: string;
 }

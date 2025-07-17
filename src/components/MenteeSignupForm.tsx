@@ -1,128 +1,218 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import type { MenteeSignupData } from "../types"
+import { useEffect, useState } from "react";
+import type { MenteeProfileUpdate } from "../types";
+import { useLocation, useNavigate } from "react-router-dom";
+import { updateProfile } from "../services/authService";
+import { useStore } from "../UserStore/userData";
+import { profileData } from "../services/menteeService";
 
 interface MenteeSignupFormProps {
-  onBack: () => void
-  onSubmit: (data: MenteeSignupData) => void
+  onBack: () => void;
+  onSubmit: (data: MenteeProfileUpdate) => void;
 }
 
-const MenteeSignupForm = ({ onBack, onSubmit }: MenteeSignupFormProps) => {
-  const [formData, setFormData] = useState<MenteeSignupData>({
+const UpdateProfile = () => {
+  const navigate = useNavigate();
+  const New = useLocation().state?.new;
+  const User = useStore((state) => state);
+  const [loaded, setLoaded] = useState<boolean>(false)
+
+  const [formData, setFormData] = useState<MenteeProfileUpdate>({
     firstName: "",
     lastName: "",
-    email: "",
-    password: "",
-    lookingFor: "",
-  })
+    bio: "",
+    skill: "",
+    goals: "",
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit(formData)
+  if ((!loaded && User.bio)) {
+    setLoaded(!loaded);
+    setFormData({
+      ...formData,
+      firstName: User.username?.split(" ")[0] || "",
+      lastName: User.username?.split(" ")[1] || "",
+      bio: User.bio || "",
+      skill: User.skill?.join(", ") || "",
+      goals: User.goals || "",
+    });
   }
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchDetails() {
+      const details = await profileData();
+      if(details){
+        setFormData({
+          ...formData,
+          firstName: details.username.split(" ")[0],
+          lastName: details.username?.split(" ")[1],
+          bio: details.bio,
+          skill: details.skill?.join(", "),
+          goals: details.goals,
+        });
+      }
+    }
+
+    if (!loaded) {
+      fetchDetails();
+    }
+
+    return () => controller.abort();
+  }, []);
+
+  const UpdateProfileHandler = async function (e: React.FormEvent) {
+    e.preventDefault();
+
+    const payload = {
+      bio: formData.bio,
+      skill: formData.skill.split(" "),
+      goals: formData.goals,
+    };
+
+    await updateProfile(payload);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      username: `${formData.firstName} ${formData.lastName}`,
+      bio: formData.bio,
+      skill: formData.skill.split(" "),
+      goals: formData.goals,
+    };
+
+    const data = await updateProfile(payload);
+
+    if (data?.status_code === 201) {
+      navigate("/dashboard", { replace: true });
+    }
+  };
+
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
-    }))
-  }
+    }));
+  };
 
-  const isFormValid = Object.values(formData).every((value) => value.trim() !== "")
+  const iscreateProfileFormeValid = Object.values(formData).every(
+    (value) => value.trim() !== ""
+  );
+
+  const isUpdateProfileFormeValid = Object.values(formData).some(
+    (value) => value.trim() !== ""
+  );
 
   return (
     <>
-      <button className="back-button" onClick={onBack}>
-        ← Back
-      </button>
+      <button className="back-button">← Back</button>
 
-      <h2 style={{ fontSize: "24px", fontWeight: "600", marginBottom: "8px", color: "#1f2937" }}>
-        Create Your Account
-      </h2>
-      <p style={{ color: "#6b7280", marginBottom: "24px", fontSize: "14px" }}>Enter your details</p>
+      <div className="flex justify-center items-center flex-col px-10 py-26 md:flex md:justify-center md:items-center ">
+        <h2
+          style={{
+            fontSize: "44px",
+            fontWeight: "600",
+            marginBottom: "8px",
+            color: "#1f2937",
+          }}
+        >
+          Update Your Profile
+        </h2>
+        <p style={{ color: "#6b7280", marginBottom: "24px", fontSize: "24px" }}>
+          this enable us to match you to the right mentor.
+        </p>
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-row">
-          <div className="form-group">
-            <label className="form-label">First Name</label>
-            <input
-              type="text"
-              name="firstName"
-              className="form-input"
-              placeholder="John"
-              value={formData.firstName}
+        <form
+          onSubmit={!New ? UpdateProfileHandler : handleSubmit}
+          className="w-full md:max-w-[40rem] text-xl"
+        >
+          <div className="form-row">
+            <div className="form-group mb-6">
+              <label className="form-label">First Name</label>
+              <input
+                type="text"
+                name="firstName"
+                className={`w-full px-3 h-12 border border-[#CFCFCF] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111111] focus:border-transparent`}
+                placeholder="John"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+                disabled={!New}
+              />
+            </div>
+            <div className="form-group mb-6">
+              <label className="form-label">Last Name</label>
+              <input
+                type="text"
+                name="lastName"
+                className={`w-full px-3 h-12 border border-[#CFCFCF] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111111] focus:border-transparent`}
+                placeholder="Doe"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+                disabled={!New}
+              />
+            </div>
+          </div>
+
+          <div className="form-group mb-6">
+            <label className="form-label">bio</label>
+            <textarea
+              name="bio"
+              className={`w-full px-3 py-2 h-12 border border-[#CFCFCF] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111111] focus:border-transparent`}
+              placeholder="john@example.com"
+              value={formData.bio}
               onChange={handleChange}
               required
             />
           </div>
-          <div className="form-group">
-            <label className="form-label">Last Name</label>
+
+          <div className="form-group mb-6">
+            <label className="form-label">
+              skill (e.g, running dancing reading...)
+            </label>
             <input
               type="text"
-              name="lastName"
-              className="form-input"
-              placeholder="Doe"
-              value={formData.lastName}
+              name="skill"
+              className={`w-full px-3 h-12 border border-[#CFCFCF] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111111] focus:border-transparent`}
+              value={formData.skill}
               onChange={handleChange}
               required
             />
           </div>
-        </div>
 
-        <div className="form-group">
-          <label className="form-label">Email</label>
-          <input
-            type="email"
-            name="email"
-            className="form-input"
-            placeholder="john@example.com"
-            value={formData.email}
-            onChange={handleChange}
-            required
-          />
-        </div>
+          <div className="form-group mb-6">
+            <label className="form-label">goals</label>
+            <input
+              type="text"
+              name="goals"
+              className={`w-full px-3 h-12 border border-[#CFCFCF] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111111] focus:border-transparent`}
+              value={formData.goals}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <div className="form-group">
-          <label className="form-label">Password</label>
-          <input
-            type="password"
-            name="password"
-            className="form-input"
-            value={formData.password}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label className="form-label">What are you looking to learn?</label>
-          <select
-            name="lookingFor"
-            className="form-select"
-            value={formData.lookingFor}
-            onChange={handleChange}
-            required
+          <button
+            type="submit"
+            disabled={!iscreateProfileFormeValid && !isUpdateProfileFormeValid}
+            className="disabled:opacity-75 disabled:cursor-not-allowed w-full bg-[#222222] hover:bg-gray-800  text-white py-4 rounded-xl font-medium transition-colors mb-4"
           >
-            <option value="">Select an area</option>
-            <option value="Product Management">Product Management</option>
-            <option value="Software Engineering">Software Engineering</option>
-            <option value="Data Science">Data Science</option>
-            <option value="Design">Design</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Sales">Sales</option>
-            <option value="Leadership">Leadership</option>
-          </select>
-        </div>
-
-        <button type="submit" className="btn btn-primary" disabled={!isFormValid}>
-          Create Account
-        </button>
-      </form>
+            Update profile
+          </button>
+        </form>
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default MenteeSignupForm
+export default UpdateProfile;

@@ -8,8 +8,13 @@ import { useState } from "react";
 import FindMentors from "./components/FindMentors";
 import MySessions from "./components/MySession";
 import Home from "../app/page";
+import ViewRequest from "./components/ViewRequestStatus";
+import MentorSignupForm from "./components/MentorSignupForm";
+import UpdateProfile from "./components/MenteeSignupForm";
+import BookingUI from "./components/BookingUi";
+// import BookMentorship from "./components/BookMentorSHip";
 
-const Router = ({ onComplete }: any) => {
+const Router = ({ setUserRole }: any) => {
   const [user, setUser] = useState<any>(null);
 
   const handleSignupComplete = (userData: any) => {
@@ -21,16 +26,21 @@ const Router = ({ onComplete }: any) => {
   return useRoutes([
     {
       path: "/login",
-      element: <LoginFlow onRoleSelect={handler} onContinue={onComplete} />,
+      element: <LoginFlow onRoleSelect={handler} userRole={setUserRole} />,
     },
     {
       path: "/signup",
-      element: <SignUp onRoleSelect={handler} onContinue={onComplete} />,
+      element: <SignUp onRoleSelect={handler} userRole={setUserRole} />,
     },
-    { path: "/", element: <Dashboard user={user} /> },
+    { path: "/dashboard", element: <Dashboard user={user} /> },
     { path: "/find-mentors", element: <FindMentors user={user} /> },
     { path: "/sessions", element: <MySessions user={user} /> },
-    { path: "/onboarding", element: <Home /> },
+    { path: "/", element: <Home /> },
+    { path: "/request-status", element: <ViewRequest user={user} /> },
+    // { path: "/book-session", element: <BookMentorship user={user} /> },
+    { path: "/mentor", element: <MentorSignupForm  /> },
+    { path: "/profile-update", element: <UpdateProfile  /> },
+    { path: "/book", element: <BookingUI /> },
   ]);
 };
 

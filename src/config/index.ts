@@ -1,11 +1,14 @@
 import axios from "axios";
 import { Error } from "../utils/toastify";
 
+// baseURL: "https://dsa-be-u8w5.onrender.com/api/v1/",
 const Axios = axios.create({
-  baseURL: "https://dsa-be-u8w5.onrender.com/api/v1/",
-  timeout: 5000,
-  headers: { 
-    "content-type": "application/json"},
+  baseURL: "http://localhost:4040/api/v1/",
+  timeout: 60000,
+  headers: {
+    "content-type": "application/json",
+  },
+  withCredentials: true,
 });
 
 // Add a request interceptor
@@ -18,8 +21,21 @@ Axios.interceptors.request.use(
   function (error) {
     // Do something with request error
     if (error.message) {
-      Error(error.message);
-      console.log(error.message);
+      if (
+        error.code === "ECONNABORTED" ||
+        error.code === "ENOTFOUND" ||
+        error.code === "ECONNREFUSED" ||
+        error.code === "EACCES" ||
+        error.code === "ERR_BAD_REQUEST"
+      ) {
+        console.log({
+          message: error.message,
+          ErrorIdentifier: error.name,
+          ErrorCode: error.code,
+        });
+
+        // Error(error.response.data.message);
+      }
     }
     return Promise.reject(error);
   }
@@ -36,10 +52,22 @@ Axios.interceptors.response.use(
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     if (error.message) {
-      Error(error.message);
-      console.log(error.message);
+      if (
+        error.code === "ECONNABORTED" ||
+        error.code === "ENOTFOUND" ||
+        error.code === "ECONNREFUSED" ||
+        error.code === "EACCES" ||
+        error.code === "ERR_BAD_REQUEST"
+      ) {
+        // Error(error.response.data.message);
+        console.log({
+          message: error.message,
+          ErrorIdentifier: error.name,
+          ErrorCode: error.code,
+        });
+      }
     }
-    console.log(error);
+    // console.log(error);
     return Promise.reject(error);
   }
 );
