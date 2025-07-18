@@ -1,4 +1,4 @@
-import { MdCancel, MdClose } from "react-icons/md";
+import { MdCancel } from "react-icons/md";
 import type { SessionType } from "../types";
 import { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";

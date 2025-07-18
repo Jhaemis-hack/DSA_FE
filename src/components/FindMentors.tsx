@@ -2,7 +2,7 @@ import Header from "./Header";
 import { Card } from "./ui/Card";
 import type { mentorObject } from "../types";
 import MentorMenteeCard from "./MentorMenteeCard";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import {
   fetchActiveMentors,
   fetchAllMentors,

@@ -33,27 +33,6 @@ const MySessions = ({ user }: MySessionsProps) => {
     return () => controller.abort();
   }, []);
 
-  // const handleJoinSession = (sessionId: number) => {
-  //   console.log("Joining session:", sessionId);
-  //   // Implement join session logic
-  // };
-
-  // const handleRateAgain = (sessionId: number) => {
-  //   console.log("Rating session again:", sessionId);
-  //   // Implement rating logic
-  // };
-
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, index) => (
-      <span
-        key={index}
-        className={index < rating ? "text-yellow-400" : "text-gray-300"}
-      >
-        ⭐
-      </span>
-    ));
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header user={user} currentPage="my-sessions" />

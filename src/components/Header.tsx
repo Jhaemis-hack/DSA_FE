@@ -1,17 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Axios from "../config";
 import { logOut } from "../services/authService";
-import type { ResponseInterface, UserState } from "../types";
 import { useStore } from "../UserStore/userData";
-import { authRequest } from "../utils/request";
 import { MdClose } from "react-icons/md";
 import DropDown from "./DropDown";
 import { Button } from "./ui/Button";
 import { Link, useNavigate } from "react-router-dom";
 import UpdateProfile from "./updateProfile";
-import { SidebarClose } from "lucide-react";
 
 interface HeaderProps {
   user: any;

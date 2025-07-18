@@ -8,16 +8,6 @@ interface CardObject {
   makeRequest: (id: string) => void;
 }
 
-interface MenteeRequest {
-  _id: string;
-  menteeId: string;
-  name: string;
-  bio: string;
-  skill: string;
-  goals: string;
-  status: string;
-}
-
 export default function MentorMenteeCard({ Role, makeRequest }: CardObject) {
   const [booking, setBooking] = useState<boolean>(false);
 

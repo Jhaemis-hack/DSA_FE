@@ -59,7 +59,7 @@ export interface mentorRequestInterface {
 export interface adminRequestInterface {
   base: string;
   fetchAllUsers: string;
-  updateRole: (id: string) => string;
+  updateRole: (id: string, role: string) => string;
   createNewUser: string;
   editProfile: (id: string) => string;
 }

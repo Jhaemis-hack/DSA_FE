@@ -1,8 +1,5 @@
-import { useState } from "react";
 import heroImage from "../../src/assets/images.jpeg";
 import { useNavigate } from "react-router-dom";
-
-type Role = "mentee" | "mentor" | "";
 
 export default function Hero() {
   const navigate = useNavigate();
