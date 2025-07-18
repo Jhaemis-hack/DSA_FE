@@ -5,12 +5,9 @@ import type React from "react"
 import { useState } from "react"
 import type { MentorSignupData } from "../types"
 
-interface MentorSignupFormProps {
-  onBack: () => void
-  onSubmit: (data: MentorSignupData) => void
-}
 
-const MentorSignupForm = ({ onBack, onSubmit }: MentorSignupFormProps) => {
+
+const MentorSignupForm = () => {
   const [formData, setFormData] = useState<MentorSignupData>({
     firstName: "",
     lastName: "",
@@ -21,7 +18,6 @@ const MentorSignupForm = ({ onBack, onSubmit }: MentorSignupFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(formData)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -35,7 +31,7 @@ const MentorSignupForm = ({ onBack, onSubmit }: MentorSignupFormProps) => {
 
   return (
     <>
-      <button className="back-button" onClick={onBack}>
+      <button className="back-button" >
         ← Back
       </button>
 

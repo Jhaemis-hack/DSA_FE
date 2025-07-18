@@ -1,51 +1,59 @@
-import Header from "./Header"
-import { Button } from "./ui/Button"
-import { Card } from "./ui/Card"
-import type { AppView } from "../types"
+import Header from "./Header";
+import { Card } from "./ui/Card";
+import type { mentorObject } from "../types";
+import MentorMenteeCard from "./MentorMenteeCard";
+import { useEffect, useLayoutEffect, useState } from "react";
+import {
+  fetchActiveMentors,
+  fetchAllMentors,
+  sendMentorshipRequest,
+} from "../services/menteeService";
+import { useNavigate } from "react-router-dom";
 
 interface FindMentorsProps {
-  user: any
-  onNavigate: (view: AppView) => void
+  user: any;
 }
 
-const FindMentors = ({ user, onNavigate }: FindMentorsProps) => {
-  const mentors = [
-    {
-      id: 1,
-      name: "Sarah Chen",
-      avatar: "SC",
-      rating: 4.9,
-      sessions: 150,
-      skills: ["Product Strategy", "User Research"],
-      price: 120,
-    },
-    {
-      id: 2,
-      name: "Marcus Johnson",
-      avatar: "MJ",
-      rating: 4.7,
-      sessions: 200,
-      skills: ["Software Design", "Team Leadership"],
-      price: 150,
-    },
-    {
-      id: 3,
-      name: "Elena Rodriguez",
-      avatar: "ER",
-      rating: 4.8,
-      sessions: 175,
-      skills: ["UI/UX Design", "Design Systems"],
-      price: 100,
-    },
-  ]
+const FindMentors = ({ user }: FindMentorsProps) => {
+  const [mentorId, setMentorId] = useState<string>("");
+  const [recomendedMentors, setRecomendeMentors] = useState<mentorObject[]>([]);
+  const [mentors, setMentors] = useState<mentorObject[]>([]);
+  const navigate = useNavigate();
+
+  const handleMentorshipRequest = async function (id: string) {
+    await sendMentorshipRequest(id);
+    setMentorId(id);
+  };
+
+  useLayoutEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchMentors() {
+      const [recommendedMentordata, mentorsData] = await Promise.all([
+        fetchActiveMentors(),
+        fetchAllMentors(),
+      ]);
+
+      if (!recommendedMentordata) {
+        return navigate("/login", { replace: true });
+      }
+      setRecomendeMentors(recommendedMentordata.data);
+      setMentors(mentorsData.data);
+    }
+    fetchMentors();
+
+    return () => controller.abort();
+  }, [mentorId]);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header user={user} onNavigate={onNavigate} currentPage="find-mentors" />
+      <Header user={user} currentPage="find-mentors" />
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 pt-24">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Find Your Perfect Mentor</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Find Your Perfect Mentor
+          </h1>
           <div className="flex space-x-4">
             <select className="form-select bg-white">
               <option>All Categories</option>
@@ -61,40 +69,50 @@ const FindMentors = ({ user, onNavigate }: FindMentorsProps) => {
           </div>
         </div>
 
+        <h3 className="text-xl font-semibold mb-6">Recommended Mentors</h3>
         <div className="grid md:grid-cols-3 gap-6">
-          {mentors.map((mentor) => (
-            <Card key={mentor.id} className="p-6">
-              <div className="text-center mb-4">
-                <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <span className="text-white font-semibold text-lg">{mentor.avatar}</span>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-1">{mentor.name}</h3>
-                <div className="flex items-center justify-center space-x-4 text-sm text-gray-600 mb-3">
-                  <span>⭐ {mentor.rating}</span>
-                  <span>📅 {mentor.sessions} sessions</span>
-                </div>
-              </div>
+          {recomendedMentors.length < 1 ? (
+            <div className="flex justify-center items-center">
+              <img src="/emptysession.png" className="h-[18em] w-[20em]" />
+            </div>
+          ) : (
+            ""
+          )}
+          {recomendedMentors &&
+            recomendedMentors.map((mentor) => (
+              <Card key={mentor._id} className="p-6">
+                <MentorMenteeCard
+                  makeRequest={handleMentorshipRequest}
+                  Role={mentor}
+                />
+              </Card>
+            ))}
+        </div>
 
-              <div className="mb-4">
-                <div className="flex flex-wrap gap-2 justify-center">
-                  {mentor.skills.map((skill, index) => (
-                    <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <div className="text-center">
-                <div className="text-2xl font-bold text-gray-900 mb-3">${mentor.price}/session</div>
-                <Button className="w-full">Book Session</Button>
-              </div>
-            </Card>
-          ))}
+        <h3 className="text-xl font-semibold mt-10 mb-6">
+          All available Mentors
+        </h3>
+        <div className="grid md:grid-cols-3 gap-6">
+          {mentors.length < 1 ? (
+            <div className="flex justify-center items-center">
+              <img src="/emptysession.png" className="h-[18em] w-[20em]" />
+            </div>
+          ) : (
+            ""
+          )}
+          {mentors &&
+            mentors.map((mentor) => (
+              <Card key={mentor._id} className="p-6">
+                <MentorMenteeCard
+                  makeRequest={handleMentorshipRequest}
+                  Role={mentor}
+                />
+              </Card>
+            ))}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FindMentors
+export default FindMentors;

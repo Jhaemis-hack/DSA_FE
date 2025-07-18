@@ -32,7 +32,7 @@ export default function WhyChoose() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12 mb-16">
+        <div className="grid md:grid-cols-2 gap-12 mb-16 px-10">
           <div>
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">For Mentees</h3>
             <ul className="space-y-4">
