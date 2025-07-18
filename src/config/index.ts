@@ -2,7 +2,7 @@ import axios from "axios";
 
 // baseURL: "https://dsa-be-u8w5.onrender.com/api/v1/",
 const Axios = axios.create({
-  baseURL: "http://localhost:4040/api/v1/",
+  baseURL: "https://dsa-be-u8w5.onrender.com/api/v1/",
   timeout: 60000,
   headers: {
     "content-type": "application/json",
