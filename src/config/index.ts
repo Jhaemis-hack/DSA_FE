@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Error } from "../utils/toastify";
 
 // baseURL: "https://dsa-be-u8w5.onrender.com/api/v1/",
 const Axios = axios.create({

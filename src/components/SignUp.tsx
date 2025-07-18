@@ -1,32 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import type { ResponseInterface, UserRole } from "../types";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useFormik, type FormikHelpers } from "formik";
 import { loginSchema } from "../schema/formValidation";
 import { Eye, EyeOff } from "lucide-react";
-import Axios from "../config";
-import { authRequest } from "../utils/request";
-import { Error, Success } from "../utils/toastify";
 import { signUp } from "../services/authService";
-
-interface RoleSelectionProps {
-  // selectedRole: UserRole;
-  onRoleSelect: (role: UserRole) => void;
-  userRole: (role: string) => void;
-}
 
 type Role = "mentee" | "mentor" | "";
 
 const SignUp = ({
-  // selectedRole="mentee",
-  onRoleSelect,
-  userRole,
-}: RoleSelectionProps) => {
+}) => {
   const [showPassword, setShowPassword] = useState(false);
   const role = useLocation().state?.role;
-
   const navigate = useNavigate();
 
   const selectedRole: Role = role;
@@ -53,10 +39,13 @@ const SignUp = ({
     const response = await signUp(PayLoad);
 
     if (response?.status_code === 201) {
-      userRole(response.data.role);
       await actions.resetForm();
+      if (response.data.role === "mentee") {
+        navigate("/profile-update", { replace: true, state: { new: true } });
+      } else {
+        navigate("/dashboard", { replace: true, state: { new: true } });
+      }
     }
-    navigate("/profile-update", { replace: true, state: {new: true} });
   };
 
   const {

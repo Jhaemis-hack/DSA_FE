@@ -1,13 +1,14 @@
 import Header from "./Header";
-import { Button } from "./ui/Button";
 import { Card } from "./ui/Card";
-import type { AppView, mentorObject } from "../types";
+import type { mentorObject } from "../types";
 import MentorMenteeCard from "./MentorMenteeCard";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import {
   fetchActiveMentors,
+  fetchAllMentors,
   sendMentorshipRequest,
 } from "../services/menteeService";
+import { useNavigate } from "react-router-dom";
 
 interface FindMentorsProps {
   user: any;
@@ -15,31 +16,29 @@ interface FindMentorsProps {
 
 const FindMentors = ({ user }: FindMentorsProps) => {
   const [mentorId, setMentorId] = useState<string>("");
+  const [recomendedMentors, setRecomendeMentors] = useState<mentorObject[]>([]);
   const [mentors, setMentors] = useState<mentorObject[]>([]);
+  const navigate = useNavigate();
 
-  const handleMentorshipRequest = function (id: string) {
+  const handleMentorshipRequest = async function (id: string) {
+    await sendMentorshipRequest(id);
     setMentorId(id);
   };
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    if(!mentorId) return;
-
-    async function requestMentorship() {
-      await sendMentorshipRequest(mentorId);
-    }
-    requestMentorship()
-
-    return () => controller.abort();
-  }, [mentorId]);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     const controller = new AbortController();
 
     async function fetchMentors() {
-      const data: mentorObject[] = await fetchActiveMentors();
-      setMentors(data);
+      const [recommendedMentordata, mentorsData] = await Promise.all([
+        fetchActiveMentors(),
+        fetchAllMentors(),
+      ]);
+
+      if (!recommendedMentordata) {
+        return navigate("/login", { replace: true });
+      }
+      setRecomendeMentors(recommendedMentordata.data);
+      setMentors(mentorsData.data);
     }
     fetchMentors();
 
@@ -50,7 +49,7 @@ const FindMentors = ({ user }: FindMentorsProps) => {
     <div className="min-h-screen bg-gray-50">
       <Header user={user} currentPage="find-mentors" />
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 pt-24">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-900">
             Find Your Perfect Mentor
@@ -70,17 +69,40 @@ const FindMentors = ({ user }: FindMentorsProps) => {
           </div>
         </div>
 
+        <h3 className="text-xl font-semibold mb-6">Recommended Mentors</h3>
         <div className="grid md:grid-cols-3 gap-6">
-          {!Array.isArray(mentors) ? (
+          {recomendedMentors.length < 1 ? (
             <div className="flex justify-center items-center">
               <img src="/emptysession.png" className="h-[18em] w-[20em]" />
             </div>
           ) : (
             ""
           )}
-          {Array.isArray(mentors) &&
+          {recomendedMentors &&
+            recomendedMentors.map((mentor) => (
+              <Card key={mentor._id} className="p-6">
+                <MentorMenteeCard
+                  makeRequest={handleMentorshipRequest}
+                  Role={mentor}
+                />
+              </Card>
+            ))}
+        </div>
+
+        <h3 className="text-xl font-semibold mt-10 mb-6">
+          All available Mentors
+        </h3>
+        <div className="grid md:grid-cols-3 gap-6">
+          {mentors.length < 1 ? (
+            <div className="flex justify-center items-center">
+              <img src="/emptysession.png" className="h-[18em] w-[20em]" />
+            </div>
+          ) : (
+            ""
+          )}
+          {mentors &&
             mentors.map((mentor) => (
-              <Card key={mentor.id} className="p-6">
+              <Card key={mentor._id} className="p-6">
                 <MentorMenteeCard
                   makeRequest={handleMentorshipRequest}
                   Role={mentor}

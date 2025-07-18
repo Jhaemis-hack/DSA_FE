@@ -10,37 +10,36 @@ import MySessions from "./components/MySession";
 import Home from "../app/page";
 import ViewRequest from "./components/ViewRequestStatus";
 import MentorSignupForm from "./components/MentorSignupForm";
-import UpdateProfile from "./components/MenteeSignupForm";
-import BookingUI from "./components/BookingUi";
-// import BookMentorship from "./components/BookMentorSHip";
+import UpdateProfile from "./components/updateProfile";
+import { useStore } from "./UserStore/userData";
+import MentorDashboard from "./components/MentorDashboard";
+import FindMentees from "./components/findMentee";
+import MentorSessions from "./components/mentorSessions";
 
 const Router = ({ setUserRole }: any) => {
-  const [user, setUser] = useState<any>(null);
-
-  const handleSignupComplete = (userData: any) => {
-    setUser(userData);
-  };
+  const user = useStore(state=> state)
 
   const handler = function () {};
 
   return useRoutes([
     {
       path: "/login",
-      element: <LoginFlow onRoleSelect={handler} userRole={setUserRole} />,
+      element: <LoginFlow />,
     },
     {
       path: "/signup",
-      element: <SignUp onRoleSelect={handler} userRole={setUserRole} />,
+      element: <SignUp />,
     },
     { path: "/dashboard", element: <Dashboard user={user} /> },
     { path: "/find-mentors", element: <FindMentors user={user} /> },
     { path: "/sessions", element: <MySessions user={user} /> },
     { path: "/", element: <Home /> },
     { path: "/request-status", element: <ViewRequest user={user} /> },
-    // { path: "/book-session", element: <BookMentorship user={user} /> },
     { path: "/mentor", element: <MentorSignupForm  /> },
     { path: "/profile-update", element: <UpdateProfile  /> },
-    { path: "/book", element: <BookingUI /> },
+    { path: "/men-dashboard", element: <MentorDashboard user={(user)} /> },
+    { path: "/find-mentee", element: <FindMentees /> },
+    { path: "/sessions-mentor", element: <MentorSessions user={user}/> },
   ]);
 };
 

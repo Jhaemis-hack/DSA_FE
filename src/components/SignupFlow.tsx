@@ -1,57 +1,57 @@
-"use client"
+// "use client"
 
-import { useState } from "react"
-import RoleSelection from "./RoleSelection"
-import MenteeSignupForm from "./MenteeSignupForm"
-import MentorSignupForm from "./MentorSignupForm"
-import type { UserRole, SignupStep, MenteeSignupData, MentorSignupData } from "../types"
+// import { useState } from "react"
+// import RoleSelection from "./RoleSelection"
+// import MenteeSignupForm from "./updateProfile"
+// import MentorSignupForm from "./MentorSignupForm"
+// import type { UserRole, SignupStep, MentorSignupData } from "../types"
 
-interface SignupFlowProps {
-  onComplete: (userData: any) => void
-}
+// interface SignupFlowProps {
+//   onComplete: (userData: any) => void
+// }
 
-const SignupFlow = ({ onComplete }: SignupFlowProps) => {
-  const [currentStep, setCurrentStep] = useState<SignupStep>("role-selection")
-  const [selectedRole, setSelectedRole] = useState<UserRole>(null)
+// const SignupFlow = ({ onComplete }: SignupFlowProps) => {
+//   const [currentStep, setCurrentStep] = useState<SignupStep>("role-selection")
+//   const [selectedRole, setSelectedRole] = useState<UserRole>(null)
 
-  const handleRoleSelect = (role: UserRole) => {
-    setSelectedRole(role)
-  }
+//   const handleRoleSelect = (role: UserRole) => {
+//     setSelectedRole(role)
+//   }
 
-  const handleRoleContinue = () => {
-    if (selectedRole === "mentee") {
-      setCurrentStep("mentee-form")
-    } else if (selectedRole === "mentor") {
-      setCurrentStep("mentor-form")
-    }
-  }
+//   const handleRoleContinue = () => {
+//     if (selectedRole === "mentee") {
+//       setCurrentStep("mentee-form")
+//     } else if (selectedRole === "mentor") {
+//       setCurrentStep("mentor-form")
+//     }
+//   }
 
-  const handleBack = () => {
-    setCurrentStep("role-selection")
-    setSelectedRole(null)
-  }
+//   const handleBack = () => {
+//     setCurrentStep("role-selection")
+//     setSelectedRole(null)
+//   }
 
-  const handleMenteeSubmit = (data: MenteeSignupData) => {
-    console.log("Mentee signup data:", data)
-    onComplete({ ...data, role: "mentee" })
-  }
+//   // const handleMenteeSubmit = (data: MenteeSignupData) => {
+//   //   console.log("Mentee signup data:", data)
+//   //   onComplete({ ...data, role: "mentee" })
+//   // }
 
-  const handleMentorSubmit = (data: MentorSignupData) => {
-    console.log("Mentor signup data:", data)
-    onComplete({ ...data, role: "mentor" })
-  }
+//   const handleMentorSubmit = (data: MentorSignupData) => {
+//     console.log("Mentor signup data:", data)
+//     onComplete({ ...data, role: "mentor" })
+//   }
 
-  return (
-    <div className="signup-modal">
-      {currentStep === "role-selection" && (
-        <RoleSelection selectedRole={selectedRole} onRoleSelect={handleRoleSelect} onContinue={handleRoleContinue} />
-      )}
+//   return (
+//     <div className="signup-modal">
+//       {currentStep === "role-selection" && (
+//         <RoleSelection selectedRole={selectedRole} onRoleSelect={handleRoleSelect} onContinue={handleRoleContinue} />
+//       )}
+// {/* 
+//       {currentStep === "mentee-form" && <MenteeSignupForm onBack={handleBack} onSubmit={handleMenteeSubmit} />}
 
-      {currentStep === "mentee-form" && <MenteeSignupForm onBack={handleBack} onSubmit={handleMenteeSubmit} />}
+//       {currentStep === "mentor-form" && <MentorSignupForm onBack={handleBack} onSubmit={handleMentorSubmit} />} */}
+//     </div>
+//   )
+// }
 
-      {currentStep === "mentor-form" && <MentorSignupForm onBack={handleBack} onSubmit={handleMentorSubmit} />}
-    </div>
-  )
-}
-
-export default SignupFlow
+// export default SignupFlow

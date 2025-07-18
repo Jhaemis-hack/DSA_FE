@@ -7,7 +7,7 @@ import type { MenteeProfileUpdate } from "../types";
 import { useLocation, useNavigate } from "react-router-dom";
 import { updateProfile } from "../services/authService";
 import { useStore } from "../UserStore/userData";
-import { profileData } from "../services/menteeService";
+import { profileData, updateUserProfile } from "../services/menteeService";
 
 interface MenteeSignupFormProps {
   onBack: () => void;
@@ -20,6 +20,8 @@ const UpdateProfile = () => {
   const User = useStore((state) => state);
   const [loaded, setLoaded] = useState<boolean>(false)
 
+  console.log(New);
+  
   const [formData, setFormData] = useState<MenteeProfileUpdate>({
     firstName: "",
     lastName: "",
@@ -44,21 +46,22 @@ const UpdateProfile = () => {
     const controller = new AbortController();
 
     async function fetchDetails() {
-      const details = await profileData();
-      if(details){
+      const {data} = await profileData();      
+      if(data){
         setFormData({
           ...formData,
-          firstName: details.username.split(" ")[0],
-          lastName: details.username?.split(" ")[1],
-          bio: details.bio,
-          skill: details.skill?.join(", "),
-          goals: details.goals,
-        });
+          firstName: data.username.split(" ")[0],
+          lastName: data.username?.split(" ")[1],
+          bio: data.bio,
+          skill: data.skill?.join(" "),
+          goals: data.goals,
+        });        
       }
     }
 
     if (!loaded) {
       fetchDetails();
+      setLoaded(true);
     }
 
     return () => controller.abort();
@@ -73,7 +76,7 @@ const UpdateProfile = () => {
       goals: formData.goals,
     };
 
-    await updateProfile(payload);
+    await updateUserProfile(payload);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -114,26 +117,24 @@ const UpdateProfile = () => {
 
   return (
     <>
-      <button className="back-button">← Back</button>
-
-      <div className="flex justify-center items-center flex-col px-10 py-26 md:flex md:justify-center md:items-center ">
+      <div className="flex justify-center items-center flex-col px-10 py-16 md:flex md:justify-center md:items-center ">
         <h2
           style={{
-            fontSize: "44px",
+            fontSize: "16px",
             fontWeight: "600",
             marginBottom: "8px",
             color: "#1f2937",
           }}
         >
-          Update Your Profile
+          {!New ? "Manage Profile" : "Create Your Profile"}
         </h2>
-        <p style={{ color: "#6b7280", marginBottom: "24px", fontSize: "24px" }}>
+        <p style={{ color: "#6b7280", marginBottom: "12px", fontSize: "12px" }}>
           this enable us to match you to the right mentor.
         </p>
 
         <form
           onSubmit={!New ? UpdateProfileHandler : handleSubmit}
-          className="w-full md:max-w-[40rem] text-xl"
+          className="w-full md:max-w-[40rem] text-md"
         >
           <div className="form-row">
             <div className="form-group mb-6">

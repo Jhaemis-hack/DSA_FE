@@ -10,6 +10,7 @@ export default function UpcomingSession({ session }: { session: SessionType }) {
     console.log("Rescheduling session:", sessionId);
     // Implement reschedule logic
   };
+  
 
   return (
     <div
@@ -43,7 +44,7 @@ export default function UpcomingSession({ session }: { session: SessionType }) {
             onClick={() => handleJoinSession(Number(session.id))}
             className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors"
           >
-            pending
+            starting soon
           </button>
           <button
             onClick={() => handleReschedule(Number(session.id))}

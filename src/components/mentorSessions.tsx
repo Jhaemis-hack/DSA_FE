@@ -7,41 +7,49 @@ import UpcomingSession from "./UpcomingSessionCard";
 import { useEffect, useState } from "react";
 import { viewAvailableSessions } from "../services/menteeService";
 import { useNavigate } from "react-router-dom";
+import { getActiveSessions } from "../services/mentorService";
 
 interface MySessionsProps {
   user: any;
 }
 
-const MySessions = ({ user }: MySessionsProps) => {
+const MentorSessions = ({ user }: MySessionsProps) => {
   const [sessions, setSessions] = useState<SessionType[]>();
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  useEffect(() => {
-    const controller = new AbortController();
 
-    async function fetchMentors() {
-      const data = await viewAvailableSessions();
+    useEffect(() => {
+      const controller = new AbortController();
+  
+      async function fetchMentors() {
+        const data = await getActiveSessions();
 
-      if (data.status && data.status === 401) {
-        navigate("/login", { replace: true });
+        if (data.status && data.status === 401){
+          navigate("/login", { replace: true})
+        }        
+        console.log(data);
+        
+        
+        setSessions(data.data);
       }
+      fetchMentors();
+  
+      return () => controller.abort();
+    }, []);
 
-      setSessions(data.data);
-    }
-    fetchMentors();
+    console.log(sessions);
+    
+  
 
-    return () => controller.abort();
-  }, []);
+  const handleJoinSession = (sessionId: number) => {
+    console.log("Joining session:", sessionId);
+    // Implement join session logic
+  };
 
-  // const handleJoinSession = (sessionId: number) => {
-  //   console.log("Joining session:", sessionId);
-  //   // Implement join session logic
-  // };
-
-  // const handleRateAgain = (sessionId: number) => {
-  //   console.log("Rating session again:", sessionId);
-  //   // Implement rating logic
-  // };
+  const handleRateAgain = (sessionId: number) => {
+    console.log("Rating session again:", sessionId);
+    // Implement rating logic
+  };
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -67,12 +75,12 @@ const MySessions = ({ user }: MySessionsProps) => {
             Upcoming Sessions
           </h2>
           <div className="space-y-4">
-            {Array.isArray(sessions) &&
-              sessions.map((session) => {
-                if (session.sessionStatus === "scheduled") {
-                  return <UpcomingSession key={session.id} session={session} />;
-                }
-              })}
+            {Array.isArray(sessions) && sessions.map(session => {
+              if(session.sessionStatus==="scheduled"){ 
+                return <UpcomingSession key={session.id} session={session} />
+              }
+            }
+            )}
           </div>
         </div>
 
@@ -82,12 +90,11 @@ const MySessions = ({ user }: MySessionsProps) => {
             Past Sessions
           </h2>
           <div className="space-y-4">
-            {Array.isArray(sessions) &&
-              sessions.map((session) => {
-                if (session.sessionStatus === "completed") {
-                  return <PassSessions key={session.id} session={session} />;
-                }
-              })}
+            {Array.isArray(sessions) && sessions.map(session => {
+              if(session.sessionStatus==="completed"){
+              return <PassSessions key={session.id} session={session} />
+              }}
+            )}
           </div>
         </div>
       </div>
@@ -95,4 +102,4 @@ const MySessions = ({ user }: MySessionsProps) => {
   );
 };
 
-export default MySessions;
+export default MentorSessions;

@@ -3,102 +3,144 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Modal from "react-modal";
 import axios from "axios";
+import { Error, Success } from "../utils/toastify";
+import Axios from "../config";
+import { menteeRequest } from "../utils/request";
+import { BookASession, fetchAvailableDate } from "../services/menteeService";
 
-// Types
-interface Availability {
-  _id: string;
-  mentorId: string;
-  date: string; // ISO date string
-  startTime: string; // HH:mm
-  endTime: string; // HH:mm
-}
+// Utility to format selected date to "Wednesday 16 July, 2025"
+const formatFullDate = (date: Date): string => {
+  const dayNames = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
-interface BookingRequest {
-  availabilityId: string;
-  menteeId: string;
-}
-// : React.FC<{ mentorId: string; menteeId: string }>
+  const weekday = dayNames[date.getDay()];
+  const day = date.getDate();
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear();
 
-const BookingUI = () => {
+  return `${weekday} ${day} ${month}, ${year}`;
+};
+
+const BookingUI = ({ mentorId, close }: { mentorId: string, close: ()=> void }) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [availabilities, setAvailabilities] = useState<Availability[]>([]);
+  const [mentorWeekdays, setMentorWeekdays] = useState<string[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedSlot, setSelectedSlot] = useState<Availability | null>(null);
+  const [time, setTime] = useState({
+    start: "",
+    end: ""
+  })
 
-  const mentorId = ""
-  const menteeId = ""
-
-  // Fetch availability on mount
+  // Fetch mentor's available day (e.g., "Wednesday")
   useEffect(() => {
-    axios.get(`/api/mentors/${mentorId}/availability`).then((res) => {
-      setAvailabilities(res.data);
-    });
+    const fetchAvailability = async () => {
+      const res = await fetchAvailableDate("68672eb716243a85ccf39d2a");
+      const data = res.data;      
+
+      const normalizedDays = ["wednesday", "thursday"].map(
+        (day: string) =>
+          day.charAt(0).toUpperCase() + day.slice(1).toLowerCase()
+      ); // Normalize like "Wednesday"
+      setMentorWeekdays(normalizedDays);
+
+      if (Array.isArray(data.date) && data.date.length > 0) {
+        const normalizedDays = data.date.map(
+          (day: string) =>
+            day.charAt(0).toUpperCase() + day.slice(1).toLowerCase()
+        ); // Normalize like "Wednesday"
+        setMentorWeekdays(normalizedDays);
+        setTime({
+          ...time,
+          start: data.start,
+          end: data.end,
+        })
+      } else {
+        Error("Mentor has not set any available weekdays.");
+      }
+    };
+
+    fetchAvailability();
   }, [mentorId]);
 
-  
-  const handleDateChange = (value: any, event?: React.MouseEvent<HTMLButtonElement>) => {
-    setSelectedDate(value);
+  // Enable only the mentor's weekday in the calendar
+  const tileDisabled = ({ date }: { date: Date }) => {
+    if (!mentorWeekdays || mentorWeekdays.length === 0) return true;
+
+    const currentDayName = date.toLocaleDateString("en-US", {
+      weekday: "long",
+    });
+    return !mentorWeekdays.includes(currentDayName);
   };
 
-  const getSlotsForDate = (date: Date) => {
-    const target = date.toISOString().split("T")[0];
-    return availabilities.filter((a) => a.date.startsWith(target));
-  };
-
-  const handleSlotClick = (slot: Availability) => {
-    setSelectedSlot(slot);
+  const handleDateChange = (date: any) => {
+    setSelectedDate(date);
     setModalOpen(true);
   };
 
   const confirmBooking = async () => {
-    if (!selectedSlot) return;
-    await axios.post<BookingRequest>("/api/book", {
-      availabilityId: selectedSlot._id,
-      menteeId,
-    });
-    setModalOpen(false);
-    alert("Session booked successfully");
+    if (!selectedDate) return;
+
+    const formattedDate = formatFullDate(selectedDate); // e.g., "Wednesday 16 July, 2025"
+
+    try {
+      let payload = { date: formattedDate };
+      await BookASession(mentorId, payload);
+      Success("Booking confirmed successfully.");
+    } catch (err) {
+      console.error("Booking failed:", err);
+      Error("Booking failed. Try again.");
+    } finally {
+      setModalOpen(false);
+      close()
+    }
   };
 
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold mb-4">Book a Mentorship Session</h2>
-      <Calendar onChange={handleDateChange} value={selectedDate} />
 
-      {selectedDate && (
-        <div className="mt-4">
-          <h3 className="font-semibold text-lg mb-2">Available Slots</h3>
-          <ul>
-            {getSlotsForDate(selectedDate).map((slot) => (
-              <li key={slot._id} className="mb-2">
-                <button
-                  className="px-4 py-2 bg-blue-600 text-white rounded"
-                  onClick={() => handleSlotClick(slot)}
-                >
-                  {slot.startTime} - {slot.endTime}
-                </button>
-              </li>
-            ))}
-            {getSlotsForDate(selectedDate).length === 0 && (
-              <p>No slots available.</p>
-            )}
-          </ul>
-        </div>
-      )}
+      <Calendar
+        onChange={handleDateChange}
+        value={selectedDate}
+        tileDisabled={tileDisabled}
+      />
 
       <Modal
         isOpen={modalOpen}
+        ariaHideApp={false}
         onRequestClose={() => setModalOpen(false)}
         contentLabel="Confirm Booking"
-        className="bg-white p-6 rounded shadow-lg max-w-md mx-auto mt-32"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+        className="bg-white p-6 rounded shadow-lg max-w-md mx-auto mt-2"
+        overlayClassName="fixed z-30 inset-0 bg-neutral-100/60 flex items-center justify-center"
       >
         <h3 className="text-lg font-bold mb-4">Confirm Booking</h3>
-        <p>
-          You are booking a session on <strong>{selectedSlot?.date}</strong>{" "}
-          from <strong>{selectedSlot?.startTime}</strong> to{" "}
-          <strong>{selectedSlot?.endTime}</strong>
-        </p>
+        {selectedDate && (
+          <p>
+            You are booking a session on{" "}
+            <strong>{formatFullDate(selectedDate)}</strong>,{" "}
+            from{" "}<strong>{time.start} - {time.end}</strong>.
+          </p>
+        )}
         <div className="mt-4 flex gap-4">
           <button
             onClick={confirmBooking}

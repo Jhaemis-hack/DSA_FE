@@ -1,34 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import type { ResponseInterface, UserRole } from "../types";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik, type FormikHelpers } from "formik";
 import { loginSchema } from "../schema/formValidation";
 import { Eye, EyeOff } from "lucide-react";
-import Axios from "../config";
-import { authRequest } from "../utils/request";
-import { Error, Success } from "../utils/toastify";
 import { Login } from "../services/authService";
 
-interface RoleSelectionProps {
-  // selectedRole: UserRole;
-  onRoleSelect: (role: UserRole) => void;
-  userRole: (role: string) => void;
-}
-
-type Role = "mentee" | "mentor" | "";
-
 const LoginFlow = ({
-  // selectedRole="mentee",
-  onRoleSelect,
-  userRole,
-}: RoleSelectionProps) => {
+}) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
-
-  const selectedRole: Role = "mentee";
 
   interface FormValues {
     email: string;
@@ -46,10 +29,13 @@ const LoginFlow = ({
     const response = await Login(payload);
 
     if (response?.status_code === 200) {
-      userRole(response.data.role);
       await actions.resetForm();
+      if (response.data.role === "mentee") {
+        navigate("/dashboard", { replace: true, state: { new: true,   } });
+      } else {
+        navigate("/men-dashboard", { replace: true, state: { new: true, role:response.data.role } });
+      }
     }
-    navigate("/dashboard", { replace: true });
   };
 
   const {

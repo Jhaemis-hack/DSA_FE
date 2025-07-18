@@ -1,14 +1,15 @@
 "use client";
 
 import Header from "./Header";
-import { Error, Success } from "../utils/toastify";
 import { useStore } from "../UserStore/userData";
-import type { ResponseInterface } from "../types";
-import Axios from "../config";
-import { authRequest } from "../utils/request";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { obtainFullSessionDetails } from "../services/authService";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useLayoutEffect, useState } from "react";
+import {
+  activeUserData,
+  getUserData,
+  obtainFullSessionDetails,
+} from "../services/authService";
+import { menteeRequest, mentorRequest } from "../utils/request";
 
 interface DashboardProps {
   user: any;
@@ -17,6 +18,7 @@ interface DashboardProps {
 type sessionData = {
   id: number;
   mentor: string;
+  industry: string[];
   mentee: string;
   date: string;
 };
@@ -38,50 +40,35 @@ const Dashboard = ({ user }: DashboardProps) => {
   });
 
   const navigate = useNavigate();
-
   const User = useStore((state) => state);
 
-  if (!User.userId && !loggedIn) {
-    Axios.get<{ status_code: number }>(authRequest.activeUser)
-      .then(({ data }) => {
-        if (data.status_code < 400) {
-          setLoggedIn(true);
-        } else {
-          return navigate("/login", { replace: true });
-        }
-      })
-      .catch((err) => {
-        return navigate("/", { replace: true });
-      });
+  const isAuthenticated = async () => {
+    try {
+      const data = await activeUserData();
+
+      if (data.status === 401) {
+        navigate("/login", { replace: true });
+      }
+
+      if (data.data.status_code < 400) {
+        setLoggedIn(true);
+      }
+    } catch (err: any) {
+      if (err.message !== "canceled") {
+        navigate("/login", { replace: true });
+      }
+    }
+  };
+
+  if (!loggedIn) {
+    isAuthenticated();
   }
 
-  // useEffect(() => {
-  //   if (User.userId && loggedIn) return;
+  if (!User.userId) {
+    getUserData(menteeRequest.myProfile);
+  }
 
-  //   const controller = new AbortController();
-
-  //   const checkSession = async () => {
-  //     try {
-  //       const { data } = await Axios.get<{ status_code: number }>(
-  //         authRequest.activeUser,
-  //       );
-  //       if (data.status_code < 400) {
-  //         setLoggedIn(true);
-  //       } else {
-  //         navigate("/login", { replace: true });
-  //       }
-  //     } catch (err: any) {
-  //       if (err.message !== "canceled") {
-  //         navigate("/", { replace: true });
-  //       }
-  //     }
-  //   };
-  //   checkSession();
-
-  //   return () => controller.abort();
-  // }, [loggedIn]);
-
-  useEffect(() => {
+  useLayoutEffect(() => {
     const controller = new AbortController();
 
     async function fetchDetails() {
@@ -93,8 +80,6 @@ const Dashboard = ({ user }: DashboardProps) => {
     return () => controller.abort();
   }, []);
 
-  console.log(sessionDetail);
-
   const stats = [
     {
       label: "Active Mentors",
@@ -102,7 +87,6 @@ const Dashboard = ({ user }: DashboardProps) => {
       icon: "👥",
     },
     { label: "Total Sessions", value: sessionDetail.TotalSessions, icon: "📅" },
-    { label: "Hours Completed", value: "12", icon: "⏱️" },
     { label: "Average Rating", value: sessionDetail.averageRating, icon: "⭐" },
   ];
 
@@ -110,7 +94,7 @@ const Dashboard = ({ user }: DashboardProps) => {
     <div className="min-h-screen bg-gray-50">
       <Header user={user} currentPage="dashboard" />
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 pt-24">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Welcome back, {User.username || "John"}!
@@ -121,7 +105,7 @@ const Dashboard = ({ user }: DashboardProps) => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
           {stats.map((stat, index) => (
             <div
               key={index}
@@ -165,10 +149,10 @@ const Dashboard = ({ user }: DashboardProps) => {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-900">
-                          {session.mentor}
+                          {session.industry[0]}
                         </h3>
                         <p className="text-sm text-gray-600">
-                          with {session.mentee}
+                          with {session.mentor}
                         </p>
                       </div>
                     </div>

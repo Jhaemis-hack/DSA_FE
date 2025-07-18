@@ -34,6 +34,7 @@ export interface AuthRequestInterface {
 export interface menteeRequestInterface {
   base: string;
   myProfile: string;
+  fetchAllMentors: string;
   randomProfile: (id: string) => string;
   updateProfile: string;
   fetchMentors: string;
@@ -49,7 +50,8 @@ export interface mentorRequestInterface {
   base: string;
   myProfile: string,
   viewRequest: string;
-  updateRequestStatus: (reqId: string) => string;
+  getAvailability: string;
+  updateRequestStatus: (reqId: string, action: string) => string;
   fetchActiveSessions: string;
   editAvailability: string;
 }
@@ -62,6 +64,17 @@ export interface adminRequestInterface {
   editProfile: (id: string) => string;
 }
 
+export interface UserState {
+  userId: string | null;
+  email: string | null;
+  username: string | null;
+  bio: string | null;
+  skill: string[] | null;
+  goals: string | null;
+  role: string | null;
+  industry: string | null;
+}
+
 export interface ResponseInterface {
   status_code: number;
   message: string;
@@ -69,10 +82,11 @@ export interface ResponseInterface {
 }
 
 export interface mentorObject {
-  id: string;
-  name: string;
-  skill: string[];
-  industry: string[];
+    _id: string;
+    mentorId: string;
+    name: string;
+    skill: string[];
+    industry: string[];
 }
 
 export interface requestStatusType {
@@ -90,6 +104,7 @@ export interface SessionType {
   skill: string;
   industry: string;
   sessionStatus: string;
+  feedback: string;
   rating: number;
   date: string;
   start: string;

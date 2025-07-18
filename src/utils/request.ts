@@ -24,6 +24,7 @@ export const menteeRequest: menteeRequestInterface = {
   },
   updateProfile: "users/me/profile",
   fetchMentors: "users/",
+  fetchAllMentors: "users/mentors/all",
   sendRequest(mentorId: string) {
     return `users/requests/${mentorId}`;
   },
@@ -42,10 +43,11 @@ export const menteeRequest: menteeRequestInterface = {
 
 export const mentorRequest: mentorRequestInterface = {
   base: "mentors",
-  myProfile: "users/me",
+  myProfile: "mentors/me",
   viewRequest: "mentors/requests/received",
-  updateRequestStatus(reqId: string) {
-    return `mentors/requests/${reqId}`;
+  getAvailability: "mentors/available",
+  updateRequestStatus(reqId: string, action: string) {
+    return `mentors/requests/${reqId}?atn=${action}`;
   },
   fetchActiveSessions: "mentors/sessions/mentor",
   editAvailability: "mentors/available/edit",
