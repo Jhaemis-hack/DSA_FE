@@ -9,11 +9,6 @@ import { updateProfile } from "../services/authService";
 import { useStore } from "../UserStore/userData";
 import { profileData, updateUserProfile } from "../services/menteeService";
 
-interface MenteeSignupFormProps {
-  onBack: () => void;
-  onSubmit: (data: MenteeProfileUpdate) => void;
-}
-
 const UpdateProfile = () => {
   const navigate = useNavigate();
   const New = useLocation().state?.new;

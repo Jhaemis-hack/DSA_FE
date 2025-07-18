@@ -4,7 +4,6 @@ import './index.css';
 import Dashboard from "./components/Dashboard";
 import LoginFlow from "./components/LoginFlow";
 import SignUp from "./components/SignUp";
-import { useState } from "react";
 import FindMentors from "./components/FindMentors";
 import MySessions from "./components/MySession";
 import Home from "../app/page";
@@ -15,11 +14,11 @@ import { useStore } from "./UserStore/userData";
 import MentorDashboard from "./components/MentorDashboard";
 import FindMentees from "./components/findMentee";
 import MentorSessions from "./components/mentorSessions";
+import AdminDashboard from "./components/AdminDashboard";
+import CreateNewUser from "./components/createNewUser";
 
-const Router = ({ setUserRole }: any) => {
+const Router = () => {
   const user = useStore(state=> state)
-
-  const handler = function () {};
 
   return useRoutes([
     {
@@ -40,6 +39,8 @@ const Router = ({ setUserRole }: any) => {
     { path: "/men-dashboard", element: <MentorDashboard user={(user)} /> },
     { path: "/find-mentee", element: <FindMentees /> },
     { path: "/sessions-mentor", element: <MentorSessions user={user}/> },
+    { path: "/admin-dashboard", element: <AdminDashboard /> },
+    { path: "/create-account", element: <CreateNewUser/> },
   ]);
 };
 

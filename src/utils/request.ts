@@ -1,4 +1,3 @@
-import { string } from "yup";
 import type {
   adminRequestInterface,
   AuthRequestInterface,
@@ -56,8 +55,8 @@ export const mentorRequest: mentorRequestInterface = {
 export const adminRequest: adminRequestInterface = {
   base: "admin/",
   fetchAllUsers: "admin/users",
-  updateRole(id: string) {
-    return `admin/users/${id}/role`;
+  updateRole(id: string, role:string) {
+    return `admin/users/${id}/role?nwrole=${role}`;
   },
   createNewUser: "admin/users/register",
   editProfile(id: string) {

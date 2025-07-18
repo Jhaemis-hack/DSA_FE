@@ -2,14 +2,14 @@
 
 import Header from "./Header";
 import { useStore } from "../UserStore/userData";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useLayoutEffect, useState } from "react";
 import {
   activeUserData,
   getUserData,
   obtainFullSessionDetails,
 } from "../services/authService";
-import { menteeRequest, mentorRequest } from "../utils/request";
+import { menteeRequest } from "../utils/request";
 
 interface DashboardProps {
   user: any;

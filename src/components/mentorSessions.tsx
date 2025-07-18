@@ -5,7 +5,6 @@ import type { SessionType } from "../types";
 import PassSessions from "./PassSessionCard";
 import UpcomingSession from "./UpcomingSessionCard";
 import { useEffect, useState } from "react";
-import { viewAvailableSessions } from "../services/menteeService";
 import { useNavigate } from "react-router-dom";
 import { getActiveSessions } from "../services/mentorService";
 
@@ -41,26 +40,26 @@ const MentorSessions = ({ user }: MySessionsProps) => {
     
   
 
-  const handleJoinSession = (sessionId: number) => {
-    console.log("Joining session:", sessionId);
-    // Implement join session logic
-  };
+//   const handleJoinSession = (sessionId: number) => {
+//     console.log("Joining session:", sessionId);
+//     // Implement join session logic
+//   };
 
-  const handleRateAgain = (sessionId: number) => {
-    console.log("Rating session again:", sessionId);
-    // Implement rating logic
-  };
+//   const handleRateAgain = (sessionId: number) => {
+//     console.log("Rating session again:", sessionId);
+//     // Implement rating logic
+//   };
 
-  const renderStars = (rating: number) => {
-    return Array.from({ length: 5 }, (_, index) => (
-      <span
-        key={index}
-        className={index < rating ? "text-yellow-400" : "text-gray-300"}
-      >
-        ⭐
-      </span>
-    ));
-  };
+//   const renderStars = (rating: number) => {
+//     return Array.from({ length: 5 }, (_, index) => (
+//       <span
+//         key={index}
+//         className={index < rating ? "text-yellow-400" : "text-gray-300"}
+//       >
+//         ⭐
+//       </span>
+//     ));
+//   };
 
   return (
     <div className="min-h-screen bg-gray-50">

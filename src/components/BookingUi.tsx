@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import Modal from "react-modal";
-import axios from "axios";
+
 import { Error, Success } from "../utils/toastify";
-import Axios from "../config";
-import { menteeRequest } from "../utils/request";
+
+
 import { BookASession, fetchAvailableDate } from "../services/menteeService";
 
 // Utility to format selected date to "Wednesday 16 July, 2025"

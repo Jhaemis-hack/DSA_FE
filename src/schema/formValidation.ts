@@ -38,3 +38,10 @@ export const signupSchema = yup.object().shape({
   password: yup.string().min(8, "Min. 8 Characters").required("Required"),
   confirmpass: yup.string().min(8, "Min. 8 Characters").required("Required"),
 });
+
+export const createUserSchema = yup.object().shape({
+  email: yup.string().email("Invalid Email Address").required("Required"),
+  password: yup.string().min(8, "Min. 8 Characters").required("Required"),
+  confirmpass: yup.string().min(8, "Min. 8 Characters").required("Required"),
+  role: yup.string().required("Required"),
+});

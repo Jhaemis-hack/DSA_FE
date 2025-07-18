@@ -2,20 +2,16 @@
 
 import Header from "./Header";
 import { useStore } from "../UserStore/userData";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   useEffect,
-  useLayoutEffect,
   useState,
-  type ReactEventHandler,
 } from "react";
 import {
-  activeUserData,
+
   getUserData,
-  obtainFullSessionDetails,
 } from "../services/authService";
 import { menteeRequest, mentorRequest } from "../utils/request";
-import { Divide } from "lucide-react";
 import {
   getAvailableDays,
   updateAvailableDays,
@@ -28,9 +24,6 @@ interface DashboardProps {
 }
 
 const MentorDashboard = ({ user }: DashboardProps) => {
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
-
-  const navigate = useNavigate();
   const role = useLocation().state ? useLocation().state.role : "";
   const User = useStore((state) => state);
 
@@ -144,8 +137,6 @@ function ButtonNavigator(url: string) {
 function UpdateAvailability() {
   const [weekdays, setWeekdays] = useState<string[]>([]);
   const [days, setDays] = useState<string>("");
-  const [start, setStart] = useState<string>("");
-  const [end, setEnd] = useState<string>("");
   const [startHour, setStartHour] = useState<number | "">("");
   const [endHour, setEndHour] = useState<number | "">("");
 
@@ -161,7 +152,7 @@ function UpdateAvailability() {
   };
 
   const HandleAvailableDaysUpdate = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (startHour === "" || endHour === "") {
       Error("Please enter both start and end times");
@@ -201,8 +192,6 @@ function UpdateAvailability() {
 
       if (data?.status_code < 400) {
         setWeekdays(data.data.date);
-        setStart(data.data.startTime);
-        setEnd(data.data.endTime);
       }
     }
     fetchDateData();
@@ -219,7 +208,7 @@ function UpdateAvailability() {
     setDays(e.target.value);
   };
 
-  const handleTextAreaChange = function () {};
+
 
   return (
     <div>
@@ -269,7 +258,6 @@ function UpdateAvailability() {
           id="password"
           name="password"
           value={weekdays}
-          onChange={handleTextAreaChange}
           className={`w-full mb-2 px-3 h-12 overflow-x-scroll border border-[#CFCFCF] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#111111] focus:border-transparent`}
         />
         <div className="flex justify-between gap-8">

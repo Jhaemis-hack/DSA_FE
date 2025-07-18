@@ -5,7 +5,6 @@ import MentorMenteeCard from "./MentorMenteeCard";
 import { useEffect, useState } from "react";
 import {  viewRequestStatus } from "../services/menteeService";
 import { useNavigate } from "react-router-dom";
-import { useStore } from "../UserStore/userData";
 
 interface FindMentorsProps {
   user: any;
